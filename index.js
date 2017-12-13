@@ -48,9 +48,9 @@ var vendingMachine = {
 
     inputMoney : function(input){
         this.coin += parseInt(input);
-
         if(!this.existEnoughMoney()){
             console.log('돈을 더 투입해주세요');
+            this.coin += input;
             this.requireMoney();
             return;
         }
@@ -105,25 +105,31 @@ var vendingMachine = {
         });
 
         thisDrink = thisDrink[0];
-
-        this.disposeMoney(thisDrink);
-        this.disposeStock(thisDrink);
+        if(thisDrink==='undefined'){
+            console.log('다시 입력해주세요');
+            this.requireDrink();
+        }
         this.returnDrink(thisDrink);
     },
     disposeMoney : function (thisDrink) {
         this.coin -= parseInt(thisDrink.price);
+        console.log('잔액: '+this.coin+'원');
         },
     disposeStock : function (thisDrink) {
         thisDrink.stock--;
     },
     returnDrink : function (thisDrink) {
-        if(thisDrink.stock>=0) {
+        if(thisDrink.stock>=0 && this.coin>=thisDrink.price) {
             console.log(thisDrink.name + '나왔습니다');
+            this.disposeMoney(thisDrink);
+            this.disposeStock(thisDrink);
+        }
+        else if(this.coin<thisDrink.price){
+            console.log('금액이 부족합니다');
         }
         else{
             console.log('선택할 수 없습니다');
         }
-
         this.requireReorderDrink();
     },
     returnMoney : function () {
